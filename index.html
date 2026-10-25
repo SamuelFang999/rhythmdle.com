@@ -47,7 +47,29 @@
     .difficulty-choice { display:grid; gap:2px; text-align:left; min-width:150px }
     .difficulty-choice small { color:var(--muted); font-size:11px; font-weight:450 }
     @media(max-width:580px) { .settings-panel.open{grid-template-columns:1fr} }
-    .game { position:relative; height:min(58vh,490px); min-height:350px; overflow:hidden; border:1px solid #38394f; border-radius:17px; background:linear-gradient(180deg,#181927,#12131e 80%); box-shadow:0 20px 70px #0005; touch-action:manipulation }
+    .hidden { display:none !important }
+    .title-screen { padding:34px 0 42px }
+    .title-hero { position:relative; overflow:hidden; padding:clamp(28px,6vw,58px); border:1px solid #38394f; border-radius:22px; background:linear-gradient(145deg,#222238,#171824 65%,#171824); box-shadow:0 22px 72px #0005 }
+    .title-hero::after { content:""; position:absolute; width:280px; height:280px; right:-90px; top:-110px; border:1px solid #ff648d30; border-radius:50%; box-shadow:0 0 0 30px #ff648d08,0 0 0 62px #58dded08; pointer-events:none }
+    .eyebrow { margin:0 0 13px; color:var(--pink); font-size:11px; font-weight:850; letter-spacing:.18em; text-transform:uppercase }
+    .title-hero h1 { max-width:600px; font-size:clamp(42px,8vw,74px); letter-spacing:-.06em }
+    .title-copy { max-width:520px; margin:18px 0 24px; color:#b5b4ca; font-size:16px }
+    .challenge-meta { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 26px }
+    .challenge-meta span { padding:6px 10px; border:1px solid #ffffff19; border-radius:999px; color:#d4d2e7; background:#ffffff08; font-size:11px; font-weight:700 }
+    #enter-game { position:relative; z-index:1; border:0; border-radius:10px; padding:13px 19px; background:var(--pink); color:#24101a; font-weight:850; cursor:pointer; box-shadow:0 5px 20px #ff648d35 }
+    #enter-game:hover { filter:brightness(1.08); transform:translateY(-1px) }
+    .how-title { margin:31px 0 13px; font-size:18px; letter-spacing:-.02em }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
+    .step { padding:15px 16px; border:1px solid var(--line); border-radius:12px; background:#191a28a8 }
+    .step-num { display:block; margin-bottom:7px; color:var(--pink); font-size:11px; font-weight:850; letter-spacing:.12em }
+    .step strong { display:block; margin-bottom:4px; font-size:13px }
+    .step span:last-child { color:var(--muted); font-size:12px }
+    .play-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px }
+    .play-heading h1 { font-size:clamp(30px,6vw,49px) }
+    #back-home { border:1px solid var(--line); border-radius:9px; padding:8px 12px; background:#ffffff08; color:var(--ink); cursor:pointer; font-size:12px; font-weight:700 }
+    #back-home:hover { border-color:#777890 }
+    #enter-game:focus-visible,#back-home:focus-visible { outline:3px solid white; outline-offset:3px }
+    .game { position:relative; height:min(87vh,735px); min-height:525px; overflow:hidden; border:1px solid #38394f; border-radius:17px; background:linear-gradient(180deg,#181927,#12131e 80%); box-shadow:0 20px 70px #0005; touch-action:manipulation }
     .game::before { content:""; position:absolute; inset:0 0 auto; height:75px; background:linear-gradient(#ffffff05,transparent); pointer-events:none; z-index:2 }
     .lanes { display:grid; grid-template-columns:repeat(4,1fr); height:100%; padding:0 12px; position:relative }
     .lane { position:relative; border-left:1px solid #ffffff0c; background:linear-gradient(90deg,transparent,#ffffff03,transparent) }
@@ -64,20 +86,40 @@
     .key { justify-self:center; width:43px; height:34px; border:1px solid #ffffff2b; border-radius:8px; background:#ffffff0d; color:#f3f1ff; font-size:13px; font-weight:800; pointer-events:none }
     .key.down { background:var(--lane); color:#171722; border-color:var(--lane) }
     #feedback { position:absolute; z-index:6; top:21px; left:50%; transform:translateX(-50%); min-height:28px; font-size:14px; font-weight:850; letter-spacing:.12em; text-transform:uppercase; text-shadow:0 2px 14px #000; white-space:nowrap }
+    #feedback.countdown { top:50%; transform:translate(-50%,-50%); font-size:clamp(38px,9vw,68px); letter-spacing:.08em; text-shadow:0 3px 28px #000,0 0 26px #ffffff5c }
+    #feedback.count-flash { animation:count-flash .52s cubic-bezier(.16,.8,.3,1) }
+    @keyframes count-flash { 0% { opacity:.25; transform:translate(-50%,-50%) scale(.55) } 45% { opacity:1; transform:translate(-50%,-50%) scale(1.22) } 100% { opacity:1; transform:translate(-50%,-50%) scale(1) } }
     .legend { display:flex; justify-content:space-between; gap:18px; margin:12px 2px 0; color:var(--muted); font-size:12px }
     .legend b { color:#d8d6ec }
     .help { margin-top:23px; padding:16px 18px; border:1px solid var(--line); background:#191a2870; border-radius:13px; color:var(--muted); font-size:13px }
     .help strong { color:var(--ink) }
-    @media(max-width:580px) { .shell{padding:24px 14px}.tag{display:none}.stat{min-width:0;flex:1;padding:9px}.game{min-height:340px;height:54vh}.legend{font-size:11px}.key{width:38px} }
+    @media(max-width:580px) { .shell{padding:24px 14px}.tag{display:none}.stat{min-width:0;flex:1;padding:9px}.game{min-height:510px;height:81vh}.legend{font-size:11px}.key{width:38px}.steps{grid-template-columns:1fr}.title-screen{padding-top:18px}.title-hero{padding:27px 20px} }
   </style>
 </head>
 <body>
   <main class="shell">
     <header><div class="brand"><span>♪</span> rhythmdle</div><div class="tag">A tiny rhythm game prototype</div></header>
-    <div class="topline"><div><h1>Find the beat.</h1><p class="intro">Hit each note as it reaches the line. Four lanes, four keys.</p></div></div>
+    <section class="title-screen" id="title-screen">
+      <div class="title-hero">
+        <p class="eyebrow">Your daily rhythm challenge</p>
+        <h1>Catch the rhythm.</h1>
+        <p class="title-copy">A quick four-lane rhythm run. Set your difficulty, listen to the count-in, then follow the notes and keep your combo alive.</p>
+        <div class="challenge-meta"><span>4 LANES</span><span>110 BPM</span><span>D · F · J · K</span></div>
+        <button id="enter-game" type="button">Play today's <span aria-hidden="true">→</span></button>
+      </div>
+      <h2 class="how-title">How to play</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">01 / LISTEN</span><strong>Catch the count-in</strong><span>Get ready as the beat starts.</span></div>
+        <div class="step"><span class="step-num">02 / MATCH</span><strong>Follow each lane</strong><span>Use D, F, J, and K as notes reach the line.</span></div>
+        <div class="step"><span class="step-num">03 / KEEP TIME</span><strong>Build your combo</strong><span>Hit close to the beat to grow your score.</span></div>
+      </div>
+    </section>
+    <section class="play-screen hidden" id="play-screen">
+    <div class="play-heading"><div><h1>Find the beat.</h1><p class="intro">Hit each note as it reaches the line. Four lanes, four keys.</p></div><button id="back-home" type="button">← Home</button></div>
     <section class="stats" aria-label="Game stats">
       <div class="stat"><div class="stat-label">Score</div><div class="stat-value" id="score">0</div></div>
       <div class="stat"><div class="stat-label">Combo</div><div class="stat-value" id="combo">0</div></div>
+      <div class="stat"><div class="stat-label">Score boost</div><div class="stat-value" id="multiplier">1.00×</div></div>
       <div class="stat"><div class="stat-label">Accuracy</div><div class="stat-value" id="accuracy">—</div></div>
       <div class="stat"><div class="stat-label">Time left</div><div class="stat-value" id="time-left">—</div></div>
     </section>
@@ -103,12 +145,12 @@
       <div class="hit-zone"><div class="zone lane" data-zone="0"></div><div class="zone lane" data-zone="1"></div><div class="zone lane" data-zone="2"></div><div class="zone lane" data-zone="3"></div></div>
       <div class="key-row"><button class="key lane" data-key="0" aria-label="D lane">D</button><button class="key lane" data-key="1" aria-label="F lane">F</button><button class="key lane" data-key="2" aria-label="J lane">J</button><button class="key lane" data-key="3" aria-label="K lane">K</button></div>
     </section>
-    <div class="legend"><span><b>D · F · J · K</b> to play</span><span>Green = on time · Gold = close · Missed notes break your combo</span></div>
-    <aside class="help"><strong>How to play</strong><br>Press Start, then tap the matching key when a note reaches the bright line. Notes scroll toward the line at the bottom. This demo uses a fresh four-bar pattern each round.</aside>
+    <div class="legend"><span><b>D · F · J · K</b> to play</span><span>Green = perfect · Gold = good · Red = bad · Misses break combo</span></div>
+    </section>
   </main>
   <script>
     (() => {
-      const bpm = 110, beatMs = 60000 / bpm, baseTravelMs = 1700;
+      const bpm = 110, beatMs = 60000 / bpm, baseTravelMs = 2550;
       const difficultySettings = { easy: { hitWindow: 210, badWindow: 300, density: 0.62 }, medium: { hitWindow: 180, badWindow: 270, density: 0.82 }, hard: { hitWindow: 145, badWindow: 235, density: 1 } };
       const laneNames = ['D lane', 'F lane', 'J lane', 'K lane'];
       let settings = { speed: 1, keys: ['d', 'f', 'j', 'k'], difficulty: 'medium' };
@@ -118,6 +160,10 @@
       const zones = [...document.querySelectorAll('[data-zone]')];
       const keyButtons = [...document.querySelectorAll('[data-key]')];
       const startButton = document.querySelector('#start');
+      const titleScreen = document.querySelector('#title-screen');
+      const playScreen = document.querySelector('#play-screen');
+      const enterGameButton = document.querySelector('#enter-game');
+      const backHomeButton = document.querySelector('#back-home');
       const settingsToggle = document.querySelector('#settings-toggle');
       const difficultyToggle = document.querySelector('#difficulty-toggle');
       const difficultyPanel = document.querySelector('#difficulty-panel');
@@ -126,9 +172,19 @@
       const bindingsEl = document.querySelector('#bindings');
       const status = document.querySelector('#status');
       const feedback = document.querySelector('#feedback');
-      const scoreEl = document.querySelector('#score'), comboEl = document.querySelector('#combo'), accuracyEl = document.querySelector('#accuracy');
+      const scoreEl = document.querySelector('#score'), comboEl = document.querySelector('#combo'), accuracyEl = document.querySelector('#accuracy'), multiplierEl = document.querySelector('#multiplier');
       const timerEl = document.querySelector('#time-left');
       let notes = [], running = false, startAt = 0, raf = 0, score = 0, combo = 0, judged = 0, earned = 0, audio, roundDuration = 0, roundHitWindow = 0;
+
+      enterGameButton.addEventListener('click', () => {
+        titleScreen.classList.add('hidden'); playScreen.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      backHomeButton.addEventListener('click', () => {
+        if (running) return;
+        playScreen.classList.add('hidden'); titleScreen.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
 
       function saveSettings() { localStorage.setItem('rhythmdle-settings', JSON.stringify(settings)); }
       function renderBindings() {
@@ -182,10 +238,16 @@
 
       function updateStats() {
         scoreEl.textContent = score.toLocaleString(); comboEl.textContent = combo;
+        multiplierEl.textContent = `${(1 + Math.min(combo, 50) * 0.005).toFixed(2)}×`;
         accuracyEl.textContent = judged ? `${Math.round(earned / (judged * 100) * 100)}%` : '—';
       }
 
-      function say(text, color = '') { feedback.textContent = text; feedback.style.color = color || 'var(--ink)'; }
+      function say(text, color = '') { feedback.classList.remove('countdown'); feedback.textContent = text; feedback.style.color = color || 'var(--ink)'; }
+      function flashCount(text, color = '#fff') {
+        feedback.textContent = text; feedback.style.color = color; feedback.classList.add('countdown'); feedback.classList.remove('count-flash');
+        void feedback.offsetWidth;
+        feedback.classList.add('count-flash');
+      }
 
       function press(laneIndex) {
         if (!running) return;
@@ -200,17 +262,18 @@
         setTimeout(() => { zones[laneIndex].classList.remove('flash'); keyButtons[laneIndex].classList.remove('down'); }, 100);
         const delta = Math.abs(note.time - now);
         note.judged = note.hit = true; note.el?.remove(); judged++;
+        const scoreMultiplier = 1 + Math.min(combo, 50) * 0.005;
         if (delta <= 45) {
-          score += 200 + Math.min(combo, 50); combo++; earned += 100;
-          updateStats(); say('Perfect!', '#99f0bd');
+          score += Math.round(200 * scoreMultiplier); combo++; earned += 100;
+          updateStats(); say(`Perfect! · ${scoreMultiplier.toFixed(2)}×`, '#99f0bd');
         } else if (delta <= rules.hitWindow) {
-          score += 100; combo++; earned += 75;
-          updateStats(); say('Good!', '#ffd36a');
+          score += Math.round(100 * scoreMultiplier); combo++; earned += 75;
+          updateStats(); say(`Good! · ${scoreMultiplier.toFixed(2)}×`, '#ffd36a');
         } else {
           score -= 50; combo = 0; earned += 35;
           zones[laneIndex].classList.add('flash-bad');
           setTimeout(() => zones[laneIndex].classList.remove('flash-bad'), 160);
-          updateStats(); say('Bad', '#ff405d');
+          updateStats(); say('Bad · combo broken', '#ff405d');
         }
       }
 
@@ -220,6 +283,7 @@
 
       function finish() {
         running = false; cancelAnimationFrame(raf); startButton.textContent = 'Play again';
+        backHomeButton.hidden = false;
         speedInput.disabled = false;
         document.querySelectorAll('.difficulty-choice').forEach(button => { button.disabled = false; });
         renderBindings(); timerEl.textContent = '0.0s';
@@ -258,15 +322,18 @@
         notes.forEach(n => n.el?.remove()); score = combo = judged = earned = 0; updateStats();
         notes = makePattern(); roundHitWindow = difficultySettings[settings.difficulty].hitWindow;
         roundDuration = notes[notes.length - 1].time + roundHitWindow + 100;
-        running = true; captureLane = -1; speedInput.disabled = true;
+        running = true; captureLane = -1; speedInput.disabled = true; backHomeButton.hidden = true;
         document.querySelectorAll('.difficulty-choice').forEach(button => { button.disabled = true; });
         renderBindings(); timerEl.textContent = `${(roundDuration / 1000).toFixed(1)}s`;
         startButton.textContent = 'Playing…'; status.textContent = 'Listen for the count-in'; say('Ready?');
-        const countIn = 3;
+        const countIn = 4;
         startAt = performance.now() + countIn * beatMs;
-        for (let i = 0; i < countIn; i++) beep(audio.currentTime + i * beatMs / 1000, i === 0);
+        for (let i = 0; i < countIn; i++) {
+          beep(audio.currentTime + i * beatMs / 1000, i === 0);
+          setTimeout(() => { if (running) flashCount(String(countIn - i)); }, i * beatMs);
+        }
         for (let i = 0; i < 16; i++) beep(audio.currentTime + (countIn * beatMs + i * beatMs) / 1000, i % 4 === 0);
-        setTimeout(() => { if (running) { status.textContent = 'Go! · 110 BPM'; say('Go!'); } }, countIn * beatMs);
+        setTimeout(() => { if (running) { status.textContent = 'Go! · 110 BPM'; flashCount('GO!', '#99f0bd'); } }, countIn * beatMs);
         raf = requestAnimationFrame(frame);
       }
 
