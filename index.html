@@ -49,28 +49,29 @@
     @media(max-width:580px) { .settings-panel.open{grid-template-columns:1fr} }
     .hidden { display:none !important }
     .title-screen { padding:34px 0 42px }
-    .title-hero { position:relative; overflow:hidden; padding:clamp(28px,6vw,58px); border:1px solid #38394f; border-radius:22px; background:linear-gradient(145deg,#222238,#171824 65%,#171824); box-shadow:0 22px 72px #0005 }
+    .title-hero { position:relative; overflow:hidden; padding:clamp(28px,6vw,58px); border:1px solid #38394f; border-radius:22px; background:linear-gradient(145deg,#222238,#171824 65%,#171824); box-shadow:0 22px 72px #0005; text-align:center }
     .title-hero::after { content:""; position:absolute; width:280px; height:280px; right:-90px; top:-110px; border:1px solid #ff648d30; border-radius:50%; box-shadow:0 0 0 30px #ff648d08,0 0 0 62px #58dded08; pointer-events:none }
     .eyebrow { margin:0 0 13px; color:var(--pink); font-size:11px; font-weight:850; letter-spacing:.18em; text-transform:uppercase }
-    .title-hero h1 { max-width:600px; font-size:clamp(42px,8vw,74px); letter-spacing:-.06em }
-    .challenge-meta { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 26px }
+    .title-hero h1 { max-width:600px; margin:0 auto; font-size:clamp(42px,8vw,74px); letter-spacing:-.06em }
+    .challenge-meta { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:18px 0 26px }
     .challenge-meta span { padding:6px 10px; border:1px solid #ffffff19; border-radius:999px; color:#d4d2e7; background:#ffffff08; font-size:11px; font-weight:700 }
     #enter-game { position:relative; z-index:1; border:0; border-radius:10px; padding:13px 19px; background:var(--pink); color:#24101a; font-weight:850; cursor:pointer; box-shadow:0 5px 20px #ff648d35 }
     #enter-game:hover { filter:brightness(1.08); transform:translateY(-1px) }
     .how-title { margin:31px 0 13px; font-size:18px; letter-spacing:-.02em }
+    .title-screen > .how-title { text-align:center }
     .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
-    .step { padding:15px 16px; border:1px solid var(--line); border-radius:12px; background:#191a28a8 }
+    .step { padding:15px 16px; border:1px solid var(--line); border-radius:12px; background:#191a28a8; text-align:center }
     .step-num { display:block; margin-bottom:7px; color:var(--pink); font-size:11px; font-weight:850; letter-spacing:.12em }
     .step strong { display:block; margin-bottom:4px; font-size:13px }
     .step span:last-child { color:var(--muted); font-size:12px }
     .play-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px }
     .play-heading h1 { font-size:clamp(30px,6vw,49px) }
     .results-screen { padding:34px 0 42px }
-    .results-card { padding:clamp(24px,5vw,42px); border:1px solid #38394f; border-radius:20px; background:linear-gradient(145deg,#222238,#171824 70%); box-shadow:0 22px 72px #0005 }
+    .results-card { padding:clamp(24px,5vw,42px); border:1px solid #38394f; border-radius:20px; background:linear-gradient(145deg,#222238,#171824 70%); box-shadow:0 22px 72px #0005; text-align:center }
     .results-card h1 { margin-bottom:8px; font-size:clamp(34px,6vw,52px) }
     .results-score { margin:18px 0 22px; color:var(--muted); font-size:13px }
     .results-score strong { display:block; color:var(--ink); font-size:36px; letter-spacing:-.04em }
-    .result-counts { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0 24px }
+    .result-counts { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:18px 0 24px }
     .result-count { padding:13px; border:1px solid var(--line); border-radius:11px; background:#ffffff06 }
     .result-count span { display:block; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.1em }
     .result-count strong { font-size:24px }
@@ -78,12 +79,13 @@
     .result-count.good strong { color:var(--yellow) }
     .result-count.bad strong { color:#ff405d }
     .result-count.miss strong { color:#ff829a }
+    .result-count.accuracy strong { color:var(--cyan) }
     #result-bonus { min-height:20px; color:var(--yellow); font-size:13px; font-weight:750 }
-    .result-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px }
+    .result-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:18px }
     .result-actions button { border:1px solid var(--line); border-radius:9px; padding:10px 15px; background:#ffffff08; color:var(--ink); cursor:pointer; font-weight:700 }
-    #result-retry { border:0; background:var(--pink); color:#24101a }
-    .center-display { position:absolute; z-index:7; top:50%; left:50%; transform:translate(-50%,-50%); color:var(--yellow); font-size:clamp(26px,5vw,42px); font-weight:900; letter-spacing:.08em; text-align:center; text-shadow:0 3px 28px #000,0 0 24px #ffd36a66; white-space:nowrap; pointer-events:none }
-    .center-display.countdown { font-size:clamp(42px,10vw,72px) }
+    .result-actions button:disabled { opacity:.55; cursor:default }
+    .center-display { position:absolute; z-index:7; top:16px; left:50%; transform:translateX(-50%); color:var(--yellow); font-size:17px; font-weight:900; letter-spacing:.08em; text-align:center; text-shadow:0 3px 20px #000,0 0 18px #ffd36a66; white-space:nowrap; pointer-events:none }
+    .center-display.countdown { top:50%; transform:translate(-50%,-50%); font-size:clamp(42px,10vw,72px) }
     .center-display.count-flash { animation:count-flash .52s cubic-bezier(.16,.8,.3,1) }
     @keyframes count-flash { 0% { opacity:.25; transform:translate(-50%,-50%) scale(.55) } 45% { opacity:1; transform:translate(-50%,-50%) scale(1.22) } 100% { opacity:1; transform:translate(-50%,-50%) scale(1) } }
     #back-home { border:1px solid var(--line); border-radius:9px; padding:8px 12px; background:#ffffff08; color:var(--ink); cursor:pointer; font-size:12px; font-weight:700 }
@@ -110,7 +112,8 @@
     .legend b { color:#d8d6ec }
     .help { margin-top:23px; padding:16px 18px; border:1px solid var(--line); background:#191a2870; border-radius:13px; color:var(--muted); font-size:13px }
     .help strong { color:var(--ink) }
-    @media(max-width:580px) { .shell{padding:24px 14px}.tag{display:none}.stat{min-width:0;flex:1;padding:9px}.game{min-height:510px;height:81vh}.legend{font-size:11px}.key{width:38px}.steps{grid-template-columns:1fr}.title-screen{padding-top:18px}.title-hero{padding:27px 20px}.result-counts{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:680px) { .result-counts{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:580px) { .shell{padding:24px 14px}.tag{display:none}.stat{min-width:0;flex:1;padding:9px}.game{min-height:510px;height:81vh}.legend{font-size:11px}.key{width:38px}.steps{grid-template-columns:1fr}.title-screen{padding-top:18px}.title-hero{padding:27px 20px} }
   </style>
 </head>
 <body>
@@ -118,8 +121,8 @@
     <header><div class="brand"><span>♪</span> rhythmdle</div><div class="tag">A tiny rhythm game prototype</div></header>
     <section class="title-screen" id="title-screen">
       <div class="title-hero">
+        <h1>Rhythmdle</h1>
         <p class="eyebrow">Your daily rhythm challenge</p>
-        <h1>Rhythmdle.</h1>
         <div class="challenge-meta"><span>4 LANES</span><span>110 BPM</span><span>D · F · J · K</span></div>
         <button id="enter-game" type="button">Play today's <span aria-hidden="true">→</span></button>
       </div>
@@ -152,7 +155,7 @@
     </section>
     <section class="game" id="game" aria-label="Four lane rhythm game. Use D, F, J, and K to hit notes.">
       <div id="feedback" aria-live="polite"></div>
-      <div class="center-display" id="center-display" aria-live="polite">COMBO 0</div>
+      <div class="center-display" id="center-display" aria-live="polite" hidden>COMBO 0</div>
       <div class="lanes" id="lanes">
         <div class="lane" data-lane="0"></div><div class="lane" data-lane="1"></div><div class="lane" data-lane="2"></div><div class="lane" data-lane="3"></div>
       </div>
@@ -165,16 +168,17 @@
     <section class="results-screen hidden" id="results-screen" aria-label="Run results">
       <div class="results-card">
         <p class="eyebrow">Run complete</p>
-        <h1>Rhythmdle.</h1>
+        <h1>Rhythmdle</h1>
         <div class="results-score">Final score<strong id="result-score">0</strong></div>
         <div class="result-counts">
           <div class="result-count perfect"><span>Perfect</span><strong id="result-perfects">0</strong></div>
           <div class="result-count good"><span>Good</span><strong id="result-goods">0</strong></div>
           <div class="result-count bad"><span>Bad</span><strong id="result-bads">0</strong></div>
           <div class="result-count miss"><span>Miss</span><strong id="result-misses">0</strong></div>
+          <div class="result-count accuracy"><span>Accuracy</span><strong id="result-accuracy">—</strong></div>
         </div>
         <div id="result-bonus" aria-live="polite"></div>
-        <div class="result-actions"><button id="result-retry" type="button">Set up another run</button><button id="result-home" type="button">Title screen</button></div>
+        <div class="result-actions"><button type="button" disabled aria-label="Leaderboard coming soon">Leaderboard</button><button id="result-home" type="button">Title screen</button></div>
       </div>
     </section>
   </main>
@@ -206,21 +210,18 @@
       const resultsScreen = document.querySelector('#results-screen');
       const scoreEl = document.querySelector('#score'), accuracyEl = document.querySelector('#accuracy');
       const timerEl = document.querySelector('#time-left');
-      const resultScore = document.querySelector('#result-score'), resultPerfects = document.querySelector('#result-perfects'), resultGoods = document.querySelector('#result-goods'), resultBads = document.querySelector('#result-bads'), resultMisses = document.querySelector('#result-misses'), resultBonus = document.querySelector('#result-bonus');
+      const resultScore = document.querySelector('#result-score'), resultPerfects = document.querySelector('#result-perfects'), resultGoods = document.querySelector('#result-goods'), resultBads = document.querySelector('#result-bads'), resultMisses = document.querySelector('#result-misses'), resultAccuracy = document.querySelector('#result-accuracy'), resultBonus = document.querySelector('#result-bonus');
       let notes = [], running = false, startAt = 0, raf = 0, score = 0, combo = 0, judged = 0, earned = 0, perfectCount = 0, goodCount = 0, badCount = 0, missCount = 0, audio, roundDuration = 0, roundHitWindow = 0;
 
       enterGameButton.addEventListener('click', () => {
         titleScreen.classList.add('hidden'); resultsScreen.classList.add('hidden'); playScreen.classList.remove('hidden');
+        backHomeButton.hidden = false; startButton.textContent = 'Start game';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
       backHomeButton.addEventListener('click', () => {
         if (running) return;
         playScreen.classList.add('hidden'); titleScreen.classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-      document.querySelector('#result-retry').addEventListener('click', () => {
-        resultsScreen.classList.add('hidden'); playScreen.classList.remove('hidden'); backHomeButton.hidden = false;
-        startButton.textContent = 'Start game'; window.scrollTo({ top: 0, behavior: 'smooth' });
       });
       document.querySelector('#result-home').addEventListener('click', () => {
         resultsScreen.classList.add('hidden'); titleScreen.classList.remove('hidden');
@@ -280,12 +281,13 @@
       function updateStats() {
         scoreEl.textContent = score.toLocaleString();
         centerDisplay.textContent = `COMBO ${combo}`;
+        centerDisplay.hidden = combo < 1;
         accuracyEl.textContent = judged ? `${Math.round(earned / (judged * 100) * 100)}%` : '—';
       }
 
       function say(text, color = '') { feedback.textContent = text; feedback.style.color = color || 'var(--ink)'; }
       function flashCount(text, color = '#fff') {
-        centerDisplay.textContent = text; centerDisplay.style.color = color; centerDisplay.classList.add('countdown'); centerDisplay.classList.remove('count-flash');
+        centerDisplay.hidden = false; centerDisplay.textContent = text; centerDisplay.style.color = color; centerDisplay.classList.add('countdown'); centerDisplay.classList.remove('count-flash');
         void centerDisplay.offsetWidth;
         centerDisplay.classList.add('count-flash');
       }
@@ -341,6 +343,7 @@
         if (flawless) score = Math.round(score * 1.1);
         resultScore.textContent = score.toLocaleString();
         resultPerfects.textContent = perfectCount; resultGoods.textContent = goodCount; resultBads.textContent = badCount; resultMisses.textContent = missCount;
+        resultAccuracy.textContent = accuracyEl.textContent;
         resultBonus.textContent = flawless ? 'Flawless run bonus applied!' : '';
         updateStats();
         playScreen.classList.add('hidden'); resultsScreen.classList.remove('hidden');
