@@ -342,8 +342,13 @@
         event.preventDefault();
         const name = playerNameInput.value.trim().slice(0, 16);
         if (!name) { playerNameInput.focus(); return; }
+        if (containsDisallowedUsername(name)) {
+          entryStatus.style.color = '#ff829a';
+          entryStatus.textContent = 'That username is not allowed. Please choose another.';
+          playerNameInput.focus(); return;
+        }
         const submitButton = leaderboardForm.querySelector('button[type="submit"]');
-        submitButton.disabled = true; entryStatus.textContent = 'Submitting…';
+        submitButton.disabled = true; entryStatus.style.color = ''; entryStatus.textContent = 'Submitting…';
         try {
           const response = await fetch(`${supabaseUrl}/rest/v1/leaderboard`, {
             method: 'POST',
@@ -359,6 +364,17 @@
           submitButton.disabled = false;
         }
       });
+
+      function containsDisallowedUsername(name) {
+        const normalized = name.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+          .replace(/[@4]/g, 'a').replace(/[!1|]/g, 'i').replace(/[3]/g, 'e').replace(/[0]/g, 'o').replace(/[5$]/g, 's').replace(/[7]/g, 't')
+          .replace(/[^a-z0-9]/g, '');
+        const blockedFragments = [
+          ['nig', 'ger'], ['nig', 'ga'], ['fag', 'got'], ['kike'], ['chink'], ['spic'],
+          ['wet', 'back'], ['trann', 'y'], ['ret', 'ard']
+        ].map(parts => parts.join(''));
+        return blockedFragments.some(fragment => normalized.includes(fragment));
+      }
 
       function saveSettings() { localStorage.setItem('rhythmdle-settings', JSON.stringify(settings)); }
       async function renderLeaderboard() {
@@ -675,6 +691,7 @@
       }
 
       document.addEventListener('keydown', event => {
+        if (event.target instanceof HTMLElement && (event.target.isContentEditable || event.target.matches('input, textarea, select'))) return;
         if (captureLane !== -1 && running) { captureLane = -1; renderBindings(); }
         if (captureLane !== -1) {
           event.preventDefault();
