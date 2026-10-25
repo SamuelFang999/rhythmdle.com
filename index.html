@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10111b">
+  <title>Rhythmdle — First Beat</title>
+  <style>
+    :root { color-scheme: dark; --bg:#10111b; --panel:#191a28; --muted:#999bb2; --ink:#f4f3ff; --line:#303147; --pink:#ff648d; --cyan:#58dded; --yellow:#ffd36a; --green:#9af2bf; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; background:radial-gradient(ellipse at 50% -15%,#34304d 0,transparent 54%),var(--bg); color:var(--ink); font:16px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    button { font:inherit }
+    .shell { width:min(900px,100%); margin:0 auto; padding:34px 22px 42px }
+    header { display:flex; justify-content:space-between; align-items:center; gap:20px; margin-bottom:25px }
+    .brand { font-size:14px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:#c5c2e4 }
+    .brand span { color:var(--pink) }
+    .tag { color:var(--muted); font-size:13px }
+    h1 { margin:0; font-size:clamp(30px,6vw,49px); letter-spacing:-.045em; line-height:1.05 }
+    .intro { margin:10px 0 24px; color:var(--muted) }
+    .topline { display:flex; justify-content:space-between; align-items:end; gap:18px }
+    .stats { display:flex; gap:10px; margin:22px 0 14px }
+    .stat { min-width:110px; padding:10px 14px; background:#191a28cc; border:1px solid var(--line); border-radius:12px }
+    .stat-label { color:var(--muted); font-size:11px; letter-spacing:.1em; text-transform:uppercase }
+    .stat-value { font-size:21px; font-weight:750; font-variant-numeric:tabular-nums }
+    .controls { display:flex; align-items:center; gap:12px; margin:0 0 14px }
+    #start { border:0; border-radius:10px; background:var(--pink); color:#24101a; padding:11px 20px; font-weight:800; cursor:pointer; box-shadow:0 5px 18px #ff648d38 }
+    #start:hover { filter:brightness(1.08); transform:translateY(-1px) }
+    #start:focus-visible,.key:focus-visible { outline:3px solid white; outline-offset:3px }
+    #status { color:var(--muted); font-size:13px }
+    .game { position:relative; height:min(58vh,490px); min-height:350px; overflow:hidden; border:1px solid #38394f; border-radius:17px; background:linear-gradient(180deg,#181927,#12131e 80%); box-shadow:0 20px 70px #0005; touch-action:manipulation }
+    .game::before { content:""; position:absolute; inset:0 0 auto; height:75px; background:linear-gradient(#ffffff05,transparent); pointer-events:none; z-index:2 }
+    .lanes { display:grid; grid-template-columns:repeat(4,1fr); height:100%; padding:0 12px; position:relative }
+    .lane { position:relative; border-left:1px solid #ffffff0c; background:linear-gradient(90deg,transparent,#ffffff03,transparent) }
+    .lane:last-child { border-right:1px solid #ffffff0c }
+    .lane:nth-child(1) { --lane:var(--pink) } .lane:nth-child(2) { --lane:var(--cyan) } .lane:nth-child(3) { --lane:var(--yellow) } .lane:nth-child(4) { --lane:var(--green) }
+    .lane.active { background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--lane) 13%,transparent),transparent) }
+    .note { position:absolute; z-index:3; left:50%; width:min(68px,68%); height:17px; transform:translate(-50%,-50%); border-radius:6px; background:var(--lane); box-shadow:0 0 18px color-mix(in srgb,var(--lane) 60%,transparent); }
+    .hit-line { position:absolute; z-index:4; left:12px; right:12px; bottom:76px; height:2px; background:#ffffff9c; box-shadow:0 0 13px #ffffff7a; pointer-events:none }
+    .hit-zone { position:absolute; z-index:3; left:12px; right:12px; bottom:52px; height:50px; display:grid; grid-template-columns:repeat(4,1fr); pointer-events:none }
+    .zone { border:1px solid color-mix(in srgb,var(--lane) 50%,transparent); margin:0 3px; border-radius:8px; opacity:.25; transition:background .08s,opacity .08s,transform .08s }
+    .zone.flash { opacity:.9; background:color-mix(in srgb,var(--lane) 27%,transparent); transform:scaleY(.92) }
+    .key-row { position:absolute; z-index:5; bottom:12px; left:12px; right:12px; display:grid; grid-template-columns:repeat(4,1fr); gap:6px }
+    .key { justify-self:center; width:43px; height:34px; border:1px solid #ffffff2b; border-radius:8px; background:#ffffff0d; color:#f3f1ff; font-size:13px; font-weight:800; pointer-events:none }
+    .key.down { background:var(--lane); color:#171722; border-color:var(--lane) }
+    #feedback { position:absolute; z-index:6; top:21px; left:50%; transform:translateX(-50%); min-height:28px; font-size:14px; font-weight:850; letter-spacing:.12em; text-transform:uppercase; text-shadow:0 2px 14px #000; white-space:nowrap }
+    .legend { display:flex; justify-content:space-between; gap:18px; margin:12px 2px 0; color:var(--muted); font-size:12px }
+    .legend b { color:#d8d6ec }
+    .help { margin-top:23px; padding:16px 18px; border:1px solid var(--line); background:#191a2870; border-radius:13px; color:var(--muted); font-size:13px }
+    .help strong { color:var(--ink) }
+    @media(max-width:580px) { .shell{padding:24px 14px}.tag{display:none}.stat{min-width:0;flex:1;padding:9px}.game{min-height:340px;height:54vh}.legend{font-size:11px}.key{width:38px} }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header><div class="brand"><span>♪</span> rhythmdle</div><div class="tag">A tiny rhythm game prototype</div></header>
+    <div class="topline"><div><h1>Find the beat.</h1><p class="intro">Hit each note as it reaches the line. Four lanes, four keys.</p></div></div>
+    <section class="stats" aria-label="Game stats">
+      <div class="stat"><div class="stat-label">Score</div><div class="stat-value" id="score">0</div></div>
+      <div class="stat"><div class="stat-label">Combo</div><div class="stat-value" id="combo">0</div></div>
+      <div class="stat"><div class="stat-label">Accuracy</div><div class="stat-value" id="accuracy">—</div></div>
+    </section>
+    <div class="controls"><button id="start" type="button">Start game</button><span id="status" aria-live="polite">Ready when you are · 110 BPM</span></div>
+    <section class="game" id="game" aria-label="Four lane rhythm game. Use D, F, J, and K to hit notes.">
+      <div id="feedback" aria-live="polite"></div>
+      <div class="lanes" id="lanes">
+        <div class="lane" data-lane="0"></div><div class="lane" data-lane="1"></div><div class="lane" data-lane="2"></div><div class="lane" data-lane="3"></div>
+      </div>
+      <div class="hit-line"></div>
+      <div class="hit-zone"><div class="zone lane" data-zone="0"></div><div class="zone lane" data-zone="1"></div><div class="zone lane" data-zone="2"></div><div class="zone lane" data-zone="3"></div></div>
+      <div class="key-row"><button class="key lane" data-key="0" aria-label="D lane">D</button><button class="key lane" data-key="1" aria-label="F lane">F</button><button class="key lane" data-key="2" aria-label="J lane">J</button><button class="key lane" data-key="3" aria-label="K lane">K</button></div>
+    </section>
+    <div class="legend"><span><b>D · F · J · K</b> to play</span><span>Green = on time · Gold = close · Missed notes break your combo</span></div>
+    <aside class="help"><strong>How to play</strong><br>Press Start, then tap the matching key when a note reaches the bright line. Notes scroll toward the line at the bottom. This demo uses a fresh four-bar pattern each round.</aside>
+  </main>
+  <script>
+    (() => {
+      const bpm = 110, beatMs = 60000 / bpm, travelMs = 1700, hitWindow = 180;
+      const keys = ['d', 'f', 'j', 'k'];
+      const lanes = [...document.querySelectorAll('.lane[data-lane]')];
+      const zones = [...document.querySelectorAll('[data-zone]')];
+      const keyButtons = [...document.querySelectorAll('[data-key]')];
+      const startButton = document.querySelector('#start');
+      const status = document.querySelector('#status');
+      const feedback = document.querySelector('#feedback');
+      const scoreEl = document.querySelector('#score'), comboEl = document.querySelector('#combo'), accuracyEl = document.querySelector('#accuracy');
+      let notes = [], running = false, startAt = 0, raf = 0, score = 0, combo = 0, judged = 0, earned = 0, audio;
+
+      function makePattern() {
+        const result = [];
+        // Four bars of eighth-note slots, with a readable mix of single hits and rests.
+        const sequence = [0, null, 1, 3, null, 2, 0, null, 3, 1, null, 2, 1, null, 0, 3, null, 2, 3, null, 1, 0, null, 2, 0, null, 3, 1, null, 2, null, 3];
+        sequence.forEach((lane, slot) => {
+          if (lane !== null) result.push({ lane, time: 900 + slot * beatMs / 2, judged: false, hit: false, el: null });
+        });
+        return result;
+      }
+
+      function beep(at, accent = false) {
+        if (!audio) return;
+        const osc = audio.createOscillator(), gain = audio.createGain();
+        osc.type = 'sine'; osc.frequency.value = accent ? 880 : 620;
+        gain.gain.setValueAtTime(0.0001, at); gain.gain.exponentialRampToValueAtTime(accent ? 0.09 : 0.045, at + 0.004); gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.055);
+        osc.connect(gain).connect(audio.destination); osc.start(at); osc.stop(at + 0.06);
+      }
+
+      function updateStats() {
+        scoreEl.textContent = score.toLocaleString(); comboEl.textContent = combo;
+        accuracyEl.textContent = judged ? `${Math.round(earned / (judged * 100) * 100)}%` : '—';
+      }
+
+      function say(text, color = '') { feedback.textContent = text; feedback.style.color = color || 'var(--ink)'; }
+
+      function press(laneIndex) {
+        if (!running) return;
+        const now = performance.now() - startAt;
+        const note = notes.filter(n => n.lane === laneIndex && !n.judged).sort((a, b) => Math.abs(a.time - now) - Math.abs(b.time - now))[0];
+        zones[laneIndex].classList.add('flash'); keyButtons[laneIndex].classList.add('down');
+        setTimeout(() => { zones[laneIndex].classList.remove('flash'); keyButtons[laneIndex].classList.remove('down'); }, 100);
+        if (!note || Math.abs(note.time - now) > hitWindow) { say('No note', '#a8a7bb'); return; }
+        const delta = Math.abs(note.time - now), perfect = delta < 65;
+        note.judged = note.hit = true; note.el?.remove();
+        const points = perfect ? 100 : 65;
+        score += points + Math.min(combo, 50); combo++; judged++; earned += points;
+        updateStats(); say(perfect ? 'Perfect!' : 'Good!', perfect ? '#99f0bd' : '#ffd36a');
+      }
+
+      function finish() {
+        running = false; cancelAnimationFrame(raf); startButton.textContent = 'Play again';
+        const misses = notes.filter(n => !n.hit).length;
+        updateStats();
+        status.textContent = 'Round complete'; say(misses ? `${misses} ${misses === 1 ? 'note' : 'notes'} missed` : 'All notes hit!', misses ? '#ff9cac' : '#99f0bd');
+      }
+
+      function frame() {
+        if (!running) return;
+        const now = performance.now() - startAt;
+        notes.forEach(note => {
+          const remaining = note.time - now;
+          if (!note.el && remaining <= travelMs && remaining > -hitWindow && !note.judged) {
+            note.el = document.createElement('div'); note.el.className = 'note'; lanes[note.lane].append(note.el);
+          }
+          if (note.el && !note.judged) {
+            const hitY = document.querySelector('.game').clientHeight - 76;
+            note.el.style.top = `${hitY - (remaining / travelMs) * (hitY - 24)}px`;
+          }
+          if (!note.judged && now > note.time + hitWindow) {
+            note.judged = true; note.el?.remove(); combo = 0; judged++; updateStats(); say('Miss', '#ff829a');
+          }
+        });
+        if (now > notes[notes.length - 1].time + hitWindow + 100) { finish(); return; }
+        raf = requestAnimationFrame(frame);
+      }
+
+      async function start() {
+        if (running) return;
+        if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+        if (audio.state === 'suspended') await audio.resume();
+        notes.forEach(n => n.el?.remove()); score = combo = judged = earned = 0; updateStats();
+        notes = makePattern(); running = true; startButton.textContent = 'Playing…'; status.textContent = 'Listen for the count-in'; say('Ready?');
+        const countIn = 3;
+        startAt = performance.now() + countIn * beatMs;
+        for (let i = 0; i < countIn; i++) beep(audio.currentTime + i * beatMs / 1000, i === 0);
+        for (let i = 0; i < 16; i++) beep(audio.currentTime + (countIn * beatMs + i * beatMs) / 1000, i % 4 === 0);
+        setTimeout(() => { if (running) { status.textContent = 'Go! · 110 BPM'; say('Go!'); } }, countIn * beatMs);
+        raf = requestAnimationFrame(frame);
+      }
+
+      document.addEventListener('keydown', event => {
+        const lane = keys.indexOf(event.key.toLowerCase());
+        if (lane !== -1 && !event.repeat) { event.preventDefault(); press(lane); }
+      });
+      startButton.addEventListener('click', start);
+    })();
+  </script>
+</body>
+</html>
