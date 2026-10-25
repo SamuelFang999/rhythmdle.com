@@ -43,6 +43,7 @@
     .difficulty-panel { display:none; gap:8px; margin:0 0 14px; padding:14px; border:1px solid var(--line); border-radius:13px; background:#191a28 }
     .difficulty-panel.open { display:flex }
     .difficulty-choice { border:1px solid var(--line); border-radius:9px; background:#ffffff08; color:var(--ink); padding:9px 16px; cursor:pointer; font-weight:700 }
+    .difficulty-choice:disabled { opacity:.55; cursor:not-allowed }
     .difficulty-choice.selected { border-color:var(--pink); background:#ff648d1a; color:#ff9db5 }
     .difficulty-choice { display:grid; gap:2px; text-align:left; min-width:150px }
     .difficulty-choice small { color:var(--muted); font-size:11px; font-weight:450 }
@@ -56,9 +57,23 @@
     .challenge-meta { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:18px 0 26px }
     .challenge-meta span { padding:6px 10px; border:1px solid #ffffff19; border-radius:999px; color:#d4d2e7; background:#ffffff08; font-size:11px; font-weight:700 }
     .title-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:10px }
-    #enter-game,#leaderboard-open { position:relative; z-index:1; border:0; border-radius:10px; padding:13px 19px; background:var(--pink); color:#24101a; font-weight:850; cursor:pointer; box-shadow:0 5px 20px #ff648d35 }
-    #leaderboard-open { border:1px solid #ffffff2c; background:#ffffff0b; color:var(--ink); box-shadow:none }
-    #enter-game:hover,#leaderboard-open:hover { filter:brightness(1.08); transform:translateY(-1px) }
+    #enter-game,#leaderboard-open,#calendar-open,#calendar-play { position:relative; z-index:1; border:0; border-radius:10px; padding:13px 19px; background:var(--pink); color:#24101a; font-weight:850; cursor:pointer; box-shadow:0 5px 20px #ff648d35 }
+    #leaderboard-open,#calendar-open { border:1px solid #ffffff2c; background:#ffffff0b; color:var(--ink); box-shadow:none }
+    #enter-game:hover,#leaderboard-open:hover,#calendar-open:hover,#calendar-play:hover { filter:brightness(1.08); transform:translateY(-1px) }
+    .calendar-panel { max-width:390px; margin:16px auto 0; padding:16px; border:1px solid var(--line); border-radius:13px; background:#10111b }
+    .calendar-month-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px }
+    .calendar-month-nav strong { color:var(--ink); font-size:15px }
+    .calendar-nav { width:34px; height:34px; border:1px solid var(--line); border-radius:8px; background:#ffffff08; color:var(--ink); cursor:pointer; font-size:18px }
+    .calendar-nav:disabled { opacity:.35; cursor:default }
+    .calendar-weekdays,.calendar-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; text-align:center }
+    .calendar-weekdays { margin-bottom:5px; color:var(--muted); font-size:10px; font-weight:800 }
+    .calendar-weekdays span { padding:5px 0 }
+    .calendar-days button,.calendar-days span { min-width:0; aspect-ratio:1; display:grid; place-items:center }
+    .calendar-days button { border:1px solid transparent; border-radius:8px; background:#ffffff08; color:var(--ink); cursor:pointer }
+    .calendar-days button:hover:not(:disabled) { border-color:var(--pink) }
+    .calendar-days button:disabled { color:#77778b; background:transparent; cursor:default }
+    .calendar-days button.selected { border-color:var(--pink); background:#ff648d25; color:#ff9db5; font-weight:850 }
+    #calendar-selection { min-height:18px; margin:12px 0; color:var(--muted); text-align:center; font-size:12px }
     .how-title { margin:31px 0 13px; font-size:18px; letter-spacing:-.02em }
     .title-screen > .how-title { text-align:center }
     .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
@@ -138,13 +153,20 @@
 </head>
 <body>
   <main class="shell">
-    <header><div class="brand"><span>♪</span> rhythmdle</div><div class="tag">A tiny rhythm game prototype</div></header>
+    <header><div class="brand"><span>♪</span> rhythmdle</div><div class="tag">A daily rhythm game prototype</div></header>
     <section class="title-screen" id="title-screen">
       <div class="title-hero">
-        <h1>Rhythmdle</h1>
         <p class="eyebrow">Your daily rhythm challenge</p>
+        <h1>Rhythmdle</h1>
         <div class="challenge-meta"><span>4 LANES</span><span>110 BPM</span><span>D · F · J · K</span></div>
-        <div class="title-actions"><button id="enter-game" type="button">Play today's <span aria-hidden="true">→</span></button><button id="leaderboard-open" type="button">Leaderboard</button></div>
+        <div class="title-actions"><button id="enter-game" type="button">Play today's <span aria-hidden="true">→</span></button><button id="calendar-open" type="button" aria-expanded="false" aria-controls="calendar-panel">📅 Calendar</button><button id="leaderboard-open" type="button">Leaderboard</button></div>
+        <div class="calendar-panel hidden" id="calendar-panel">
+          <div class="calendar-month-nav"><button class="calendar-nav" id="calendar-prev" type="button" aria-label="Previous month">‹</button><strong id="calendar-month"></strong><button class="calendar-nav" id="calendar-next" type="button" aria-label="Next month">›</button></div>
+          <div class="calendar-weekdays" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+          <div class="calendar-days" id="calendar-days" role="grid" aria-label="Challenge dates"></div>
+          <p id="calendar-selection" aria-live="polite"></p>
+          <div class="title-actions"><button id="calendar-play" type="button">Play selected day</button></div>
+        </div>
       </div>
       <h2 class="how-title">How to play</h2>
       <div class="steps">
@@ -230,6 +252,14 @@
       const titleScreen = document.querySelector('#title-screen');
       const playScreen = document.querySelector('#play-screen');
       const enterGameButton = document.querySelector('#enter-game');
+      const calendarOpenButton = document.querySelector('#calendar-open');
+      const calendarPanel = document.querySelector('#calendar-panel');
+      const calendarPrevButton = document.querySelector('#calendar-prev');
+      const calendarNextButton = document.querySelector('#calendar-next');
+      const calendarMonthLabel = document.querySelector('#calendar-month');
+      const calendarDays = document.querySelector('#calendar-days');
+      const calendarSelection = document.querySelector('#calendar-selection');
+      const calendarPlayButton = document.querySelector('#calendar-play');
       const leaderboardOpenButton = document.querySelector('#leaderboard-open');
       const leaderboardScreen = document.querySelector('#leaderboard-screen');
       const leaderboardContent = document.querySelector('#leaderboard-content');
@@ -251,13 +281,45 @@
       const timerEl = document.querySelector('#time-left');
       const resultScore = document.querySelector('#result-score'), resultPerfects = document.querySelector('#result-perfects'), resultGoods = document.querySelector('#result-goods'), resultBads = document.querySelector('#result-bads'), resultMisses = document.querySelector('#result-misses'), resultAccuracy = document.querySelector('#result-accuracy'), resultBonus = document.querySelector('#result-bonus');
       let notes = [], running = false, startAt = 0, raf = 0, score = 0, combo = 0, judged = 0, earned = 0, perfectCount = 0, goodCount = 0, badCount = 0, missCount = 0, audio, roundDuration = 0, roundHitWindow = 0;
+      const challengeStartDate = '2026-10-25';
+      let activeChallengeDate = utcDayKey();
+      let selectedCalendarDate = activeChallengeDate, calendarViewDate = null;
       const supabaseUrl = 'https://yynbpmojdizdjisjbdeh.supabase.co';
       const supabasePublishableKey = 'sb_publishable_I9NxSUp2zI8lV8ieB2vQ_w_alnjZtPC';
 
-      enterGameButton.addEventListener('click', () => {
+      function enterChallenge(date) {
+        if (!isValidChallengeDate(date)) return;
+        activeChallengeDate = date;
         titleScreen.classList.add('hidden'); resultsScreen.classList.add('hidden'); leaderboardScreen.classList.add('hidden'); playScreen.classList.remove('hidden');
-        backHomeButton.hidden = false; startButton.textContent = 'Start game';
+        centerDisplay.hidden = true; centerDisplay.textContent = ''; centerDisplay.style.color = '';
+        centerDisplay.classList.remove('countdown', 'count-flash'); feedback.textContent = '';
+        backHomeButton.hidden = false; renderDifficulty();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      enterGameButton.addEventListener('click', () => enterChallenge(utcDayKey()));
+      calendarOpenButton.addEventListener('click', () => {
+        const isOpen = !calendarPanel.classList.contains('hidden');
+        calendarPanel.classList.toggle('hidden', isOpen);
+        calendarOpenButton.setAttribute('aria-expanded', String(!isOpen));
+        if (!isOpen) {
+          selectedCalendarDate = activeChallengeDate;
+          calendarViewDate = monthStartFor(activeChallengeDate);
+          renderCalendar();
+        }
+      });
+      calendarPrevButton.addEventListener('click', () => {
+        if (!calendarViewDate) return;
+        calendarViewDate = new Date(Date.UTC(calendarViewDate.getUTCFullYear(), calendarViewDate.getUTCMonth() - 1, 1)); renderCalendar();
+      });
+      calendarNextButton.addEventListener('click', () => {
+        if (!calendarViewDate) return;
+        calendarViewDate = new Date(Date.UTC(calendarViewDate.getUTCFullYear(), calendarViewDate.getUTCMonth() + 1, 1)); renderCalendar();
+      });
+      calendarPlayButton.addEventListener('click', () => {
+        if (isValidChallengeDate(selectedCalendarDate)) {
+          calendarPanel.classList.add('hidden'); calendarOpenButton.setAttribute('aria-expanded', 'false');
+          enterChallenge(selectedCalendarDate);
+        }
       });
       backHomeButton.addEventListener('click', () => {
         if (running) return;
@@ -364,22 +426,104 @@
       settingsToggle.addEventListener('click', () => { const open = settingsPanel.classList.toggle('open'); settingsToggle.setAttribute('aria-expanded', String(open)); });
       function renderDifficulty() {
         difficultyToggle.textContent = `Difficulty: ${settings.difficulty[0].toUpperCase()}${settings.difficulty.slice(1)}`;
-        document.querySelectorAll('.difficulty-choice').forEach(button => button.classList.toggle('selected', button.dataset.difficulty === settings.difficulty));
+        const completed = hasCompletedChallenge(activeChallengeDate, settings.difficulty);
+        enterGameButton.hidden = allDifficultiesComplete(utcDayKey());
+        document.querySelectorAll('.difficulty-choice').forEach(button => {
+          const isComplete = hasCompletedChallenge(activeChallengeDate, button.dataset.difficulty);
+          button.classList.toggle('selected', button.dataset.difficulty === settings.difficulty);
+          button.disabled = running || isComplete;
+          const label = button.querySelector('small');
+          if (label) label.textContent = isComplete ? (activeChallengeDate === utcDayKey() ? 'Completed today · back tomorrow' : 'Already played for this date') : difficultyDescriptions[button.dataset.difficulty];
+        });
+        startButton.disabled = running || completed;
+        const isToday = activeChallengeDate === utcDayKey();
+        startButton.textContent = completed ? 'Completed' : (isToday ? 'Play today’s run' : `Play ${formatChallengeDate(activeChallengeDate)}`);
+        status.textContent = completed ? `You’ve completed this ${isToday ? 'daily' : 'archived'} run. Choose another date or difficulty.` : `Ready for ${isToday ? 'today' : formatChallengeDate(activeChallengeDate)} · 110 BPM`;
       }
+      const difficultyDescriptions = {
+        easy: 'Fewer notes, more forgiving timings',
+        medium: 'The standard experience',
+        hard: 'More notes, unforgiving timings'
+      };
+      function utcDayKey() {
+        const now = new Date();
+        return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
+      }
+      function monthStartFor(date) {
+        const parsed = new Date(`${date}T00:00:00Z`);
+        return new Date(Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), 1));
+      }
+      function renderCalendar() {
+        const year = calendarViewDate.getUTCFullYear(), month = calendarViewDate.getUTCMonth();
+        calendarMonthLabel.textContent = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(calendarViewDate);
+        const earliestMonth = monthStartFor(challengeStartDate), latestMonth = monthStartFor(utcDayKey());
+        calendarPrevButton.disabled = calendarViewDate <= earliestMonth;
+        calendarNextButton.disabled = calendarViewDate >= latestMonth;
+        calendarDays.replaceChildren();
+        const firstWeekday = new Date(Date.UTC(year, month, 1)).getUTCDay();
+        for (let blank = 0; blank < firstWeekday; blank++) calendarDays.append(document.createElement('span'));
+        const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+        for (let day = 1; day <= dayCount; day++) {
+          const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const button = document.createElement('button'); button.type = 'button'; button.textContent = String(day);
+          button.disabled = !isValidChallengeDate(date); button.classList.toggle('selected', date === selectedCalendarDate);
+          button.setAttribute('aria-label', formatChallengeDate(date)); button.setAttribute('aria-selected', String(date === selectedCalendarDate));
+          button.addEventListener('click', () => { selectedCalendarDate = date; renderCalendar(); });
+          calendarDays.append(button);
+        }
+        calendarSelection.textContent = isValidChallengeDate(selectedCalendarDate) ? `Selected: ${formatChallengeDate(selectedCalendarDate)}` : 'Choose an available date.';
+        calendarPlayButton.disabled = !isValidChallengeDate(selectedCalendarDate);
+      }
+      function isValidChallengeDate(date) { return /^\d{4}-\d{2}-\d{2}$/.test(date) && date >= challengeStartDate && date <= utcDayKey(); }
+      function formatChallengeDate(date) { return new Date(`${date}T00:00:00Z`).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }); }
+      function dailyRunStorageKey(date, difficulty) { return `rhythmdle-daily-${date}-${difficulty}`; }
+      function hasCompletedChallenge(date, difficulty) {
+        try { return localStorage.getItem(dailyRunStorageKey(date, difficulty)) === 'complete'; }
+        catch { return false; }
+      }
+      function markCompletedChallenge(date, difficulty) {
+        try { localStorage.setItem(dailyRunStorageKey(date, difficulty), 'complete'); }
+        catch { /* Keep the current page locked even if browser storage is unavailable. */ }
+      }
+      function allDifficultiesComplete(date) { return ['easy', 'medium', 'hard'].every(difficulty => hasCompletedChallenge(date, difficulty)); }
       difficultyToggle.addEventListener('click', () => { const open = difficultyPanel.classList.toggle('open'); difficultyToggle.setAttribute('aria-expanded', String(open)); });
-      document.querySelectorAll('.difficulty-choice').forEach(button => button.addEventListener('click', () => { settings.difficulty = button.dataset.difficulty; saveSettings(); renderDifficulty(); }));
+      document.querySelectorAll('.difficulty-choice').forEach(button => button.addEventListener('click', () => {
+        if (running || hasCompletedChallenge(activeChallengeDate, button.dataset.difficulty)) return;
+        settings.difficulty = button.dataset.difficulty; saveSettings(); renderDifficulty();
+      }));
       renderDifficulty();
+      function scheduleDailyUnlockRefresh() {
+        const nextMidnight = new Date(); nextMidnight.setUTCHours(24, 0, 0, 25);
+        setTimeout(() => {
+          if (!running) { activeChallengeDate = utcDayKey(); renderDifficulty(); }
+          scheduleDailyUnlockRefresh();
+        }, Math.max(1000, nextMidnight.getTime() - Date.now()));
+      }
+      scheduleDailyUnlockRefresh();
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && !running) {
+          activeChallengeDate = utcDayKey();
+          if (!calendarPanel.classList.contains('hidden')) { selectedCalendarDate = activeChallengeDate; calendarViewDate = monthStartFor(activeChallengeDate); renderCalendar(); }
+          renderDifficulty();
+        }
+      });
       renderBindings();
 
       function makePattern() {
         const result = [];
         const sequence = [0, null, 1, 3, null, 2, 0, null, 3, 1, null, 2, 1, null, 0, 3, null, 2, 3, null, 1, 0, null, 2, 0, null, 3, 1, null, 2, null, 3];
+        const random = seededRandom(`${activeChallengeDate}:${settings.difficulty}`);
+        for (let i = sequence.length - 1; i > 0; i--) {
+          const j = Math.floor(random() * (i + 1));
+          [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
+        }
+        const laneShift = Math.floor(random() * 4);
         const rules = difficultySettings[settings.difficulty], slotMs = beatMs / 2;
         const slotCount = Math.floor((rules.duration * 1000 - rules.hitWindow - 100 - 900) / slotMs) + 1;
         for (let slot = 0; slot < slotCount; slot++) {
           const patternLane = sequence[slot % sequence.length];
-          const lane = patternLane === null ? (slot * 3 + 1) % 4 : patternLane;
-          const include = settings.difficulty !== 'easy' || (patternLane !== null && (slot * 37 % 100) < rules.density * 100);
+          const lane = patternLane === null ? Math.floor(random() * 4) : (patternLane + laneShift) % 4;
+          const include = settings.difficulty !== 'easy' || (patternLane !== null && random() < rules.density);
           const time = 900 + slot * beatMs / 2;
           if (!include) continue;
           result.push({ lane, time, judged: false, hit: false, el: null });
@@ -388,6 +532,17 @@
           if (settings.difficulty === 'hard' && slot % 4 === 3) result.push({ lane: (lane + 1) % 4, time, judged: false, hit: false, el: null });
         }
         return result;
+      }
+
+      function seededRandom(seedText) {
+        let seed = 2166136261;
+        for (let i = 0; i < seedText.length; i++) seed = Math.imul(seed ^ seedText.charCodeAt(i), 16777619);
+        return () => {
+          let value = seed += 0x6D2B79F5;
+          value = Math.imul(value ^ value >>> 15, value | 1);
+          value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+          return ((value ^ value >>> 14) >>> 0) / 4294967296;
+        };
       }
 
       function beep(at, accent = false) {
@@ -456,8 +611,10 @@
 
       function finish() {
         running = false; cancelAnimationFrame(raf); startButton.textContent = 'Play again';
+        markCompletedChallenge(activeChallengeDate, settings.difficulty);
+        if (activeChallengeDate !== utcDayKey()) activeChallengeDate = utcDayKey();
         speedInput.disabled = false;
-        document.querySelectorAll('.difficulty-choice').forEach(button => { button.disabled = false; });
+        renderDifficulty();
         renderBindings(); timerEl.textContent = '0.0s';
         const flawless = perfectCount === notes.length && goodCount === 0 && badCount === 0 && missCount === 0;
         if (flawless) score = Math.round(score * 1.1);
@@ -495,6 +652,7 @@
 
       async function start() {
         if (running) return;
+        if (hasCompletedChallenge(activeChallengeDate, settings.difficulty)) { renderDifficulty(); return; }
         if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
         if (audio.state === 'suspended') await audio.resume();
         notes.forEach(n => n.el?.remove()); score = combo = judged = earned = 0; perfectCount = goodCount = badCount = missCount = 0;
